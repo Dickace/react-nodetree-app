@@ -40,7 +40,7 @@ h3{
 input{
     width: calc(100% - 17px);
     font-size: 13px;
-    padding: 5px 0px 5px 13px;
+    padding: 5px 0 5px 13px;
     background: #F6F6f6;
     border: 2px solid rgba(23,52,52,0.2);
 }

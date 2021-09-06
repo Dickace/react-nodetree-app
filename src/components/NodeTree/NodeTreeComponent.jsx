@@ -4,7 +4,7 @@ import './style.css';
 
 function NodeTreeComponent() {
   const [root, setRoot] = useState(<Node key={window.crypto.getRandomValues(new Uint8Array(3))[0]} name="root" parentNode={null} isRoot />);
-  const handleReset = function () {
+  const handleReset = function f() {
     setRoot(<Node key={window.crypto.getRandomValues(new Uint8Array(3))[0]} name="root" parentNode={null} isRoot />);
   };
   return (

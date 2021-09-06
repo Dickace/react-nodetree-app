@@ -12,12 +12,12 @@ function Node({ name, parentNode, isRoot }) {
   // maybe in future we need this (no)
   // eslint-disable-next-line no-unused-vars
   const [parent, setParent] = useState(parentNode);
-  const addChildren = function (newName, newParent) {
+  const addChildren = function f(newName, newParent) {
     const newId = window.crypto.getRandomValues(new Uint8Array(3))[0];
     // if you wanna add new Nodes in end of subtree, write children.concat(obj)
     setChildren(children.concat({ newId, newName, newParent }));
   };
-  const editNode = function (target) {
+  const editNode = function f(target) {
     target.disabled = false;
     target.focus();
   };
@@ -31,20 +31,19 @@ function Node({ name, parentNode, isRoot }) {
     }
   }
   function setAdd() {
-    document.getElementById('Add').onclick = function (e) {
+    document.getElementById('Add').onclick = function f(e) {
       e.stopPropagation();
       addChildren('newNode', nodeName);
     };
   }
   function setEdit(target) {
-    document.getElementById('Edit').onclick = function (e) {
+    document.getElementById('Edit').onclick = function f(e) {
       e.stopPropagation();
       editNode(target);
     };
   }
   function setRemove(target) {
-    console.log('setRemove');
-    document.getElementById('Remove').onclick = function (e) {
+    document.getElementById('Remove').onclick = function f(e) {
       e.stopPropagation();
       removeNode(target);
     };
@@ -64,7 +63,6 @@ function Node({ name, parentNode, isRoot }) {
   return (
     <li>
       <div
-        type="text"
         aria-hidden="true"
         aria-label="close"
         onClick={(event) => {
@@ -85,6 +83,7 @@ function Node({ name, parentNode, isRoot }) {
         }}
       >
         <input
+          type="text"
           onChange={handleNodeNameChange}
           value={nodeName}
           disabled
