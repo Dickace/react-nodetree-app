@@ -1,0 +1,50 @@
+input.select{
+    background-color: rgba(23,52,52,0.3);
+}
+.container{
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+    height: 500px;
+    width: 80%;
+}
+h3{
+    margin: 5px;
+    text-align: center;
+}
+.nodeTree-btnGroup{
+    margin-right: 15px;
+    width: calc(100% - 10px);
+    display: flex;
+    justify-content: flex-end;
+}
+.nodeTree-btnGroup > div{
+    padding: 0 10px;
+    margin: 5px 5px;
+    border: 1px solid black;
+    cursor: pointer;
+}
+.nodeTree-treeBox{
+    height: calc(100% - 90px);
+    overflow: auto;
+    margin: 15px 15px 5px;
+    border: 1px solid black;
+}
+.nodeTree-treeBox li{
+    list-style: none;
+}
+.nodeTree-treeBox > li >div> input, ul > li:last-child > div > input{
+    border-radius: 0 0 0 10px;
+}
+input{
+    width: calc(100% - 17px);
+    font-size: 13px;
+    padding: 5px 0px 5px 13px;
+    background: #F6F6f6;
+    border: 2px solid rgba(23,52,52,0.2);
+}
+input:focus{
+    background-color: rgba(23,52,52,0.6);
+    outline: none;
+}
