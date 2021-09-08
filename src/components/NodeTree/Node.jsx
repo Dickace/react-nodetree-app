@@ -1,64 +1,58 @@
 import React, {
-  useEffect, useState,
+  useEffect, useImperativeHandle, useRef, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import './style.css';
 
-function Node({ name, parentNode, isRoot }) {
+const Node = React.forwardRef(({
+  id, name, onSelect, parent,
+}, ref) => {
   const [nodeName, setNodeName] = useState(name);
   const [children, setChildren] = useState([]);
-  const [root, setRoot] = useState(false);
-  let isDeleted = false;
-  // maybe in future we need this (no)
   // eslint-disable-next-line no-unused-vars
-  const [parent, setParent] = useState(parentNode);
-  const addChildren = function f(newName, newParent) {
-    const newId = window.crypto.getRandomValues(new Uint8Array(3))[0];
-    // if you wanna add new Nodes in end of subtree, write children.concat(obj)
-    setChildren(children.concat({ newId, newName, newParent }));
+  const [parentNode, setParentNode] = useState(parent);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const removeChildren = (childId) => {
+    setChildren(children.filter((el) => el.newId !== childId));
   };
-  const editNode = function f(target) {
-    target.disabled = false;
-    target.focus();
-  };
-  function removeNode(target) {
-    // costil' x2
-    if (isDeleted === false) {
-      if (target.dataset.isroot !== 'true') {
-        target.parentNode.parentNode.parentNode.removeChild(target.parentNode.parentNode);
-        isDeleted = true;
-      }
+  const inputRef = useRef();
+  useEffect(() => {
+    if (!isDisabled) {
+      inputRef.current.focus();
     }
-  }
-  function setAdd() {
-    document.getElementById('Add').onclick = function f(e) {
-      e.stopPropagation();
-      addChildren('newNode', nodeName);
-    };
-  }
-  function setEdit(target) {
-    document.getElementById('Edit').onclick = function f(e) {
-      e.stopPropagation();
-      editNode(target);
-    };
-  }
-  function setRemove(target) {
-    document.getElementById('Remove').onclick = function f(e) {
-      e.stopPropagation();
-      removeNode(target);
-    };
-  }
-  useEffect(() => {
-    setRoot(isRoot);
-  }, []);
-  useEffect(() => {
-    setAdd();
-  }, [children]);
+  }, [isDisabled]);
+  const disable = () => {
+    if (isDisabled === true) {
+      setIsDisabled(false);
+      return false;
+    }
+    setIsDisabled(true);
+    return true;
+  };
+  useImperativeHandle(ref, () => ({
+    setNodeName,
+    setChildren,
+    children,
+    parentNode,
+    setParentNode,
+    id,
+    removeChildren,
+    disable,
+  }));
+
   const handleNodeNameChange = (event) => {
     setNodeName(event.target.value);
   };
-  const missFocus = (event) => {
-    event.target.disabled = true;
+  const missFocus = () => {
+    setIsDisabled(true);
+  };
+  const select = (event) => {
+    event.stopPropagation();
+    const allNodes = document.getElementsByTagName('input');
+    for (let i = 0; i < allNodes.length; i += 1) {
+      allNodes[i].classList.remove('select');
+    }
+    event.target?.classList.add('select');
   };
   return (
     <li>
@@ -66,52 +60,48 @@ function Node({ name, parentNode, isRoot }) {
         aria-hidden="true"
         aria-label="close"
         onClick={(event) => {
-          event.stopPropagation();
-          const allNodes = document.getElementsByTagName('input');
-          for (let i = 0; i < allNodes.length; i += 1) {
-            allNodes[i].classList.remove('select');
-          }
-          event.target?.classList.add('select');
-          setAdd();
-          setEdit(event.target);
-          setRemove(event.target);
+          select(event);
+          onSelect(ref);
         }}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
-            event.target.disabled = true;
+            setIsDisabled(true);
           }
         }}
       >
         <input
+          ref={inputRef}
           type="text"
           onChange={handleNodeNameChange}
           value={nodeName}
-          disabled
+          disabled={isDisabled ? 'disabled' : ''}
           onBlur={missFocus}
-          data-isroot={root}
         />
       </div>
       <ul>
         {children.map((child) => (
-          <Node key={child.newId} name={child.newName} parentNode={child.newParent} />
+          // eslint-disable-next-line max-len,no-return-assign
+          <Node ref={child.newNodeRef} key={child.newId} id={child.newId} name={child.newName} onSelect={onSelect} parent={child.parentRef} />
         ))}
       </ul>
     </li
-      >
+        >
 
   );
-}
+});
 
 Node.defaultProps = {
   name: 'node',
-  parentNode: null,
-  isRoot: false,
+  parent: null,
+  onSelect: '',
+  id: 0,
 };
 
 Node.propTypes = {
   name: PropTypes.string,
-  parentNode: PropTypes.node,
-  isRoot: PropTypes.bool,
+  parent: PropTypes.func,
+  onSelect: PropTypes.func,
+  id: PropTypes.number,
 };
 
 export default Node;
